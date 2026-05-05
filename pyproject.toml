@@ -1,0 +1,26 @@
+[project]
+name = "black-ops-mod-tools-installer"
+version = "1.0.0"
+description = "Installer for Black Ops Mod Tools, Linker_Mod, Mod Tools Fix, and their setup "
+readme = "README.md"
+authors = [
+    { name = "Mythical-Github", email = "67753356+Mythical-Github@users.noreply.github.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "colorama>=0.4.6",
+    "gdown>=6.0.0",
+    "requests>=2.33.1",
+]
+
+[project.scripts]
+black-ops-mod-tools-installer = "black_ops_mod_tools_installer:main"
+
+[build-system]
+requires = ["uv_build>=0.9.26,<0.10.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "auto-py-to-exe>=2.50.1",
+]

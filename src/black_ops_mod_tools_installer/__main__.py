@@ -62,25 +62,25 @@ def extract_zip(file_path, extract_to):
 
 def print_intro():
     print(Fore.GREEN + Style.BRIGHT + """
-                                    #     #                                           ###                                              
-                                    ##   ## #   # ##### #    # #  ####    ##   #      ###  ####                                        
-                                    # # # #  # #    #   #    # # #    #  #  #  #       #  #                                            
-                                    #  #  #   #     #   ###### # #      #    # #      #    ####                                        
-                                    #     #   #     #   #    # # #      ###### #               #                                       
-                                    #     #   #     #   #    # # #    # #    # #          #    #                                       
-                                    #     #   #     #   #    # #  ####  #    # ######      ####                                        
-#####   ####    #    #  ####  #####    #####  ####   ####  #       ####    # #    #  ####  #####   ##   #      #      ###### #####    
-#    # #    #   ##  ## #    # #    #     #   #    # #    # #      #        # ##   # #        #    #  #  #      #      #      #    #   
-#####  #    #   # ## # #    # #    #     #   #    # #    # #       ####    # # #  #  ####    #   #    # #      #      #####  #    #   
-#    # #    #   #    # #    # #    #     #   #    # #    # #           #   # #  # #      #   #   ###### #      #      #      #####    
-#    # #    #   #    # #    # #    #     #   #    # #    # #      #    #   # #   ## #    #   #   #    # #      #      #      #   #    
+                                    #     #                                           ###
+                                    ##   ## #   # ##### #    # #  ####    ##   #      ###  ####
+                                    # # # #  # #    #   #    # # #    #  #  #  #       #  #
+                                    #  #  #   #     #   ###### # #      #    # #      #    ####
+                                    #     #   #     #   #    # # #      ###### #               #
+                                    #     #   #     #   #    # # #    # #    # #          #    #
+                                    #     #   #     #   #    # #  ####  #    # ######      ####
+#####   ####    #    #  ####  #####    #####  ####   ####  #       ####    # #    #  ####  #####   ##   #      #      ###### #####
+#    # #    #   ##  ## #    # #    #     #   #    # #    # #      #        # ##   # #        #    #  #  #      #      #      #    #
+#####  #    #   # ## # #    # #    #     #   #    # #    # #       ####    # # #  #  ####    #   #    # #      #      #####  #    #
+#    # #    #   #    # #    # #    #     #   #    # #    # #           #   # #  # #      #   #   ###### #      #      #      #####
+#    # #    #   #    # #    # #    #     #   #    # #    # #      #    #   # #   ## #    #   #   #    # #      #      #      #   #
 #####   ####    #    #  ####  #####      #    ####   ####  ######  ####    # #    #  ####    #   #    # ###### ###### ###### #    #
 """)
 
     print(Fore.GREEN + Style.BRIGHT + """
 This tool installs the following:
 
-- Game_mod 
+- Game_mod
 - Linker_mod
 - Assets_wip_0.1.0
 - Ville's various mod tools fixes, the latest from Jan 2, 2024
@@ -88,6 +88,8 @@ This tool installs the following:
 - Shippuden Map Maker
 - SteamCMD
 - It will also run the setup.bat, converter, and clean up unneeded files
+
+It will also automatically handle merging the the mod tools dir with the game dir as need be
 
 Important Notes:
 
@@ -103,16 +105,16 @@ Important Notes:
 - If that doesn't work close it and run it again.
 - If you haven't already placed this bat in your BO + Mod Tools install (next to your BlackOps.exe) close this window and do so before continuing.
 """)
-    input("Enter 'start' to continue: ")    
+    input("Enter 'start' to continue: ")
 
 
 def download_setup_files():
     print('\nDownloading necessary files...')
-    gdown.download(urls['mod_tools_file'], 'black_ops_one_mod_tool_files.zip', fuzzy=True)
-    gdown.download(urls['shippuden_map_maker'], 'shippuden_map_maker.zip', fuzzy=True)
+    gdown.download(urls['mod_tools_file'], 'black_ops_one_mod_tool_files.zip')
+    gdown.download(urls['shippuden_map_maker'], 'shippuden_map_maker.zip')
     download_file(urls['game_mod'], 'game_mod.zip')
     download_file(urls['linker_mod'], 'LinkerMod-1.0.0.zip')
-    download_file(urls['end_message'], 'End_Message.txt')    
+    download_file(urls['end_message'], 'End_Message.txt')
 
 
 def extract_file_set_one():
@@ -162,10 +164,58 @@ def file_cleanup():
         shutil.rmtree(temp_dir)
     except Exception as e:
         print(f"Failed to remove temp directory: {e}")
-    
+
+
+def is_mod_tools_dir_already_merged() -> bool:
+    mod_tools_dir = os.path.normpath(f'{script_dir}/../Call of Duty Black Ops 42740')
+    return not os.path.isdir(mod_tools_dir)
+
+
+def merge_mod_tools_dir():
+    mod_tools_dir = os.path.normpath(f'{script_dir}/../Call of Duty Black Ops 42740')
+    game_dir = script_dir
+
+    if not os.path.isdir(mod_tools_dir):
+        raise FileNotFoundError(f"Mod tools directory not found: {mod_tools_dir}")
+
+    for item in os.listdir(mod_tools_dir):
+        src = os.path.join(mod_tools_dir, item)
+        dst = os.path.join(game_dir, item)
+
+        if os.path.exists(dst):
+            if os.path.isdir(src) and os.path.isdir(dst):
+                for root, dirs, files in os.walk(src):
+                    rel = os.path.relpath(root, src)
+                    target_root = os.path.join(dst, rel)
+                    os.makedirs(target_root, exist_ok=True)
+
+                    for f in files:
+                        s_file = os.path.join(root, f)
+                        d_file = os.path.join(target_root, f)
+                        if not os.path.exists(d_file):
+                            shutil.move(s_file, d_file)
+            else:
+                print(f"Skipping existing: {dst}")
+        else:
+            shutil.move(src, dst)
+
+    shutil.rmtree(mod_tools_dir)
+
+    try:
+        if os.name == 'nt':
+            os.system(f'mklink /J "{mod_tools_dir}" "{game_dir}"')
+        else:
+            os.symlink(game_dir, mod_tools_dir)
+    except Exception as e:
+        print(f"Failed to create symlink/junction: {e}")
+
+    return
+
 
 def main():
     print_intro()
+    if not is_mod_tools_dir_already_merged():
+         merge_mod_tools_dir()
     download_setup_files()
     extract_file_set_one()
     open_game()
@@ -178,4 +228,5 @@ def main():
 
 
 if __name__ == '__main__':
+    print(script_dir)
     main()
