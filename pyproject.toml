@@ -1,6 +1,6 @@
 [project]
 name = "black-ops-mod-tools-installer"
-version = "2.1.0"
+version = "2.1.1"
 description = "Installer for Black Ops Mod Tools, Linker_Mod, Mod Tools Fix, and their setup "
 readme = "README.md"
 authors = [

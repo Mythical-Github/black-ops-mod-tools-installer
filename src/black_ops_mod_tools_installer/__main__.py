@@ -16,7 +16,7 @@ urls = {
     "mod_tools_file": "https://drive.google.com/file/d/1nxYZZfiE8KVJQiJ3ed9-Y8tgi8Dz2QY7/view?usp=sharing",
     "game_mod": "https://github.com/Nukem9/LinkerMod/releases/download/v1.3.2/game_mod.zip",
     "linker_mod": "https://github.com/Nukem9/LinkerMod/releases/download/v1.0.0-r/LinkerMod-1.0.0.zip",
-    "end_message": "https://ia800201.us.archive.org/24/items/black_ops_mod_tools_installer_files/End_Message.txt",
+    "end_message": "https://dn721905.ca.archive.org/0/items/black_ops_mod_tools_installer_files/End_Message.txt",
     "shippuden_map_maker": "https://drive.google.com/file/d/1N7hcNr2SMLfAS2Wru5QmqPj5hkFScUkE/view?usp=sharing"
 }
 
