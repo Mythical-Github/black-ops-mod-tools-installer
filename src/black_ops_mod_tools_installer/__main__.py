@@ -6,6 +6,7 @@ import zipfile
 import requests
 import subprocess
 from colorama import init, Fore, Style
+from pathlib import Path
 
 import gdown
 
@@ -167,8 +168,11 @@ def file_cleanup():
 
 
 def is_mod_tools_dir_already_merged() -> bool:
-    mod_tools_dir = os.path.normpath(f'{script_dir}/../Call of Duty Black Ops 42740')
-    return not os.path.isdir(mod_tools_dir)
+    mod_tools_dir = Path(f'{script_dir}/../Call of Duty Black Ops 42740')
+    condition = False
+    if mod_tools_dir.is_junction() or mod_tools_dir.is_symlink():
+        condition = True
+    return condition
 
 
 def merge_mod_tools_dir():
